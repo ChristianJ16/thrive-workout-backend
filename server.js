@@ -3,7 +3,7 @@
 ////////////////////////////////
 require("dotenv").config()
 
-const { DATABASE_URL, PORT = 3000 } = process.env
+const { MONGODB_URI, PORT = 3000 } = process.env
 
 const express = require('express')
 
@@ -15,11 +15,13 @@ const cors = require('cors')
 
 const morgan = require('morgan')
 
+const methodOverride = require('method-override')
+
 ///////////////////////////////
 // DB CONNECTION
 ////////////////////////////////
 
-mongoose.connect(DATABASE_URL)
+mongoose.connect(MONGODB_URI)
 
 // Connection Events
 mongoose.connection
@@ -37,6 +39,7 @@ app.use( morgan('dev') )
 
 app.use( express.json() )
 
+app.use(methodOverride('_method'))
 
 ///////////////////////////////
 // CONTROLLERS
