@@ -3,6 +3,7 @@
 ////////////////////////////////
 require("dotenv").config()
 
+const { DATABASE_URL, PORT = 4000 } = process.env
 const { MONGODB_URI, PORT = 3000 } = process.env
 
 const express = require('express')
@@ -51,6 +52,8 @@ app.use('/users', usersController)
 const exercisesController = require('./controllers/exercises.js')
 app.use('/exercises', exercisesController)
 
+const workoutsController = require('./controllers/workouts.js')
+app.use('/workouts', workoutsController)
 
 ///////////////////////////////
 // Routes
