@@ -3,8 +3,7 @@
 ////////////////////////////////
 require("dotenv").config()
 
-const { DATABASE_URL, PORT = 4000 } = process.env
-const { MONGODB_URI, PORT = 3000 } = process.env
+const { MONGODB_URI, PORT = 4000 } = process.env
 
 const express = require('express')
 
