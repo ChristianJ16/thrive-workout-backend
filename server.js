@@ -47,6 +47,7 @@ app.use(methodOverride('_method'))
 
 const usersController = require('./controllers/users.js')
 app.use('/users', usersController)
+// app.use(isAuthenticated)
 
 const exercisesController = require('./controllers/exercises.js')
 app.use('/exercises', exercisesController)

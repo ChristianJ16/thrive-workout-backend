@@ -38,57 +38,30 @@ router.delete('/:id', async (req, res)=>{
     }
 })
 
-
-router.post('/login', async (req, res)=>{
-    
+router.post('/login', async  (req, res) => {
     try {
-        const foundUser = await User.findOne({username: req.body.username})
-        if(foundUser){
+         const foundUser = await User.findOne({email: req.body.email})
+         if(foundUser){
             const isAMatch = bcrypt.compareSync(req.body.password, foundUser.password)
             if(isAMatch){
                 console.log('login successful')
-                req.session.currentUser = foundUser
-                res.redirect('/fruits/')
+                res.status(200).json( { status: 200, user: {
+                    id: foundUser._id,
+                    firstName: foundUser.firstName,
+                    lastName: foundUser.lastName,
+                    email: foundUser.email
+                } })
             }else{
-                res.status(500).send('Username or password does not match or does not exist.')
+                res.status(401).json( { status: 401, msg: 'password does not match.' } )
             }
-        }else{
-            res.status(500).send('Username or password does not match or does not exist.')
-        }
-
-    } catch (err) {
-        console.log(err)
-        res.status(500).send('Username or password does not match or does not exist.')
+         }else{
+            res.status(401).json( { status: 401, msg: 'Username not found.'} )
+         }
+    } catch (error) {
+        console.log("error is: ", error)
+        res.status(500).json( { status: 500, msg: 'Something went wrong. Please try again later.' } )
     }
 })
-
-
-router.delete('/logout', (req, res)=>{
-    req.session.destroy( err => {
-        if(err){
-            res.status(500).send('logout failed')    
-        }else{
-            res.redirect('/users/login')
-        }  
-    })
-})
-
-// router.put('/login', (req, res) => {
-//     console.log(req.body);
-//     User.findOne({username: req.body.username}, (err, foundUser) => {
-//       if(err) {
-//         res.json('Oops, there was an error. Please try again')
-//       } else {
-//         if(!foundUser){
-//           res.json('Username and password do not match. Please try again.')
-//         } else if(bcrypt.compareSync(req.body.password, foundUser.password)) {
-//           res.json({username: foundUser.username})
-//         } else {
-//           res.json('Username and password do not match. Please try again.')
-//         }
-//       }
-//     })
-// })
 
 
 
