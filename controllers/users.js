@@ -3,6 +3,13 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/users')
 
+router.get('/', async (req, res)=>{
+    try{
+        res.json( await User.find() )
+    }catch(error){
+        res.status(400).json(error)
+    }
+})
 
 router.get('/:id', async (req, res)=>{
     try{
