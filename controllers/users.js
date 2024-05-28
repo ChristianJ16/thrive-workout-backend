@@ -4,9 +4,9 @@ const router = express.Router()
 const User = require('../models/users')
 
 
-router.get('/', async (req, res)=>{
+router.get('/:id', async (req, res)=>{
     try{
-        res.json( await User.find() )
+        res.json( await User.findById(req.params.id) )
     }catch(error){
         res.status(400).json(error)
     }
