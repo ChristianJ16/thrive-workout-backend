@@ -21,7 +21,7 @@ const methodOverride = require('method-override')
 // DB CONNECTION
 ////////////////////////////////
 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI  ,  { useNewUrlParser: true});
 
 // Connection Events
 mongoose.connection
