@@ -24,10 +24,13 @@ const methodOverride = require('method-override')
 mongoose.connect(MONGODB_URI  ,  { useNewUrlParser: true});
 
 // Connection Events
-mongoose.connection
-  .on("open", () => console.log("Your are connected to mongoose"))
-  .on("close", () => console.log("Your are disconnected from mongoose"))
-  .on("error", (error) => console.log(error))
+// mongoose.connection
+//   .on("open", () => console.log("Your are connected to mongoose"))
+//   .on("close", () => console.log("Your are disconnected from mongoose"))
+//   .on("error", (error) => console.log(error))
+db.on('error', (err) => console.log(err.message + ' is Mongod not running?'));
+db.on('connected', () => console.log('mongo connected: ', PROJECT3_DB));
+db.on('disconnected', () => console.log('mongo disconnected'));
 
 
 ///////////////////////////////
