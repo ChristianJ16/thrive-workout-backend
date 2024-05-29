@@ -2,7 +2,44 @@ const bcrypt = require('bcrypt')
 const express = require('express')
 const router = express.Router()
 const User = require('../models/users')
+const jwt = require('jsonwebtoken')
 
+
+router.post('/login', async (req, res) => {
+    try {
+        const foundUser = await User.findOne({ email: req.body.email })
+        if (foundUser && bcrypt.compareSync(req.body.password, foundUser.password)) {
+            const token = jwt.sign(
+                { id: foundUser.id, email: foundUser.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            )
+
+            // res.cookie('token', token, {
+            //     httpOnly: true,
+            //     secure: process.env.NODE_ENV === 'production',
+            //     maxAge: 3600000 // 1 hour
+            // })
+
+            res.status(200).json({
+                status: 200,
+                token: token,
+                user: {
+                    id: foundUser.id,
+                    firstName: foundUser.firstName,
+                    lastName: foundUser.lastName,
+                    email: foundUser.email
+                }
+            })
+            console.log('Sending token:', token)
+        } else {
+            res.status(401).json({ status: 401, msg: 'Invalid credentials.' })
+        }
+    } catch (error) {
+        console.error("Login error:", error)
+        res.status(500).json({ status: 500, msg: 'Something went wrong. Please try again later.' })
+    }
+})
 router.get('/', async (req, res)=>{
     try{
         res.json( await User.find() )
@@ -45,30 +82,30 @@ router.delete('/:id', async (req, res)=>{
     }
 })
 
-router.post('/login', async  (req, res) => {
-    try {
-         const foundUser = await User.findOne({email: req.body.email})
-         if(foundUser){
-            const isAMatch = bcrypt.compareSync(req.body.password, foundUser.password)
-            if(isAMatch){
-                console.log('login successful')
-                res.status(200).json( { status: 200, user: {
-                    id: foundUser._id,
-                    firstName: foundUser.firstName,
-                    lastName: foundUser.lastName,
-                    email: foundUser.email
-                } })
-            }else{
-                res.status(401).json( { status: 401, msg: 'password does not match.' } )
-            }
-         }else{
-            res.status(401).json( { status: 401, msg: 'Username not found.'} )
-         }
-    } catch (error) {
-        console.log("error is: ", error)
-        res.status(500).json( { status: 500, msg: 'Something went wrong. Please try again later.' } )
-    }
-})
+// router.post('/login', async  (req, res) => {
+//     try {
+//          const foundUser = await User.findOne({email: req.body.email})
+//          if(foundUser){
+//             const isAMatch = bcrypt.compareSync(req.body.password, foundUser.password)
+//             if(isAMatch){
+//                 console.log('login successful')
+//                 res.status(200).json( { status: 200, user: {
+//                     id: foundUser._id,
+//                     firstName: foundUser.firstName,
+//                     lastName: foundUser.lastName,
+//                     email: foundUser.email
+//                 } })
+//             }else{
+//                 res.status(401).json( { status: 401, msg: 'password does not match.' } )
+//             }
+//          }else{
+//             res.status(401).json( { status: 401, msg: 'Username not found.'} )
+//          }
+//     } catch (error) {
+//         console.log("error is: ", error)
+//         res.status(500).json( { status: 500, msg: 'Something went wrong. Please try again later.' } )
+//     }
+// })
 
 
 

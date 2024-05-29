@@ -13,9 +13,12 @@ const mongoose = require('mongoose')
 
 const cors = require('cors')
 
+const cookieParser = require('cookie-parser')
+
 const morgan = require('morgan')
 
 const methodOverride = require('method-override')
+const authenticateToken = require('./authMiddleware.js')
 
 ///////////////////////////////
 // DB CONNECTION
@@ -33,13 +36,20 @@ mongoose.connection
 ///////////////////////////////
 // Middlewear
 ////////////////////////////////
-app.use( cors() )
+app.use(cors({
+  origin: 'http://localhost:3000',  // Ensure this matches the exact URL of your frontend
+  credentials: true,                // Allows cookies to be sent
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
 app.use( morgan('dev') )
 
 app.use( express.json() )
 
 app.use(methodOverride('_method'))
+
+app.use(cookieParser())
 
 ///////////////////////////////
 // CONTROLLERS
@@ -53,7 +63,7 @@ const exercisesController = require('./controllers/exercises.js')
 app.use('/exercises', exercisesController)
 
 const workoutsController = require('./controllers/workouts.js')
-app.use('/workouts', workoutsController)
+app.use('/workouts', authenticateToken, workoutsController)
 
 ///////////////////////////////
 // Routes
